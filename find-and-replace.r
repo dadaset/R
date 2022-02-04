@@ -1,6 +1,6 @@
 library(readxl)
 library(stringr)
-renomeacao<-read_excel("C:/Users/dadaset/Desktop/LEPES/renomeacao20220203.xlsx")
+renomeacao<-read_excel("PATH/arquivo.xlsx")
 
 # Para todas as linhas em que a coluna renomeacao$nomes_originais termina com 
 # "extra", substituir inserir na coluna seguinte F depois do primeiro dígito
