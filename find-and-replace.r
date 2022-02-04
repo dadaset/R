@@ -30,3 +30,16 @@ renomeacao_1 <- merge(
 renomeacao_1[!is.na(renomeacao_1$nomes_padronizados.y),"nomes_padronizados.x"] <- renomeacao_1[!is.na(renomeacao_1$nomes_padronizados.y),"nomes_padronizados.y"]
 
 renomeacao_1 <- renomeacao_1[,c("nomes_originais","nomes_padronizados.x")]
+
+#trocando o nome da coluna 
+
+names(renomeacao_1)[2] <- "nomes_padronizados"
+
+#exportando para xlsx
+
+library("writexl")
+
+write_xlsx(renomeacao_1, "G:/Shared drives/dados/nacional/sobral/dados_secundarios/renomeacao_corrigido.xlsx")
+
+
+
