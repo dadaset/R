@@ -1,0 +1,55 @@
+---
+title: "Primeiro Markdown"
+author: "dadaset"
+date: "2/8/2022"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Este é um título com uma hashtag
+## Um subtítulo com duas
+### Um minitítulo
+#### Um minimini 
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars, warning= FALSE}
+library(ggplot2)
+
+iris <- iris
+
+grafico <- ggplot(iris, aes(x = Petal.Length, y = Petal.Width)) +
+  geom_point()
+
+#ênfase para a diferença quando adiciona color = variavel
+
+grafico <- ggplot(iris, aes(x = Petal.Length, y = Petal.Width, color = Species)) + 
+  geom_point()
+
+#adicionando linha de regressão
+grafico <- ggplot2::ggplot(iris, aes(x = Petal.Length, y = Petal.Width, color = Species)) + 
+  ggplot2::geom_point() +
+  ggplot2::geom_smooth(method = lm, se = T, fullrange = F) +
+  ggplot2::labs(title = "Dispersão entre Comprimento e Largura das Pétalas no gênero Iris",
+       x = "Comprimento da Pétala",
+       y = "Largura da Pétala"
+       )
+
+```
+
+## O gráfico 
+
+You can also embed plots, for example:
+
+```{r grafico, echo=FALSE, warning = FALSE, message = FALSE}
+plot(grafico)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
