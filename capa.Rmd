@@ -6,13 +6,12 @@ params:
     logos: TRUE
 output:
   pdf_document: 
-    latex_engine: lualatex
     extra_dependencies: awesomebox
     keep_tex: true
     includes:
-      in_header: columns.tex
-sansfont: Montserrat
+      in_header: columns.tex      
 header-includes:
+ \usepackage[defaultfam,tabular,lining]{montserrat}
  \usepackage{background}
  \usepackage{float}
  \usepackage{geometry}
@@ -22,7 +21,7 @@ header-includes:
    left=20mm,
    right=20mm,
    top=20mm,
-   bottom=5mm,
+   bottom=0mm,
  }
  \backgroundsetup{
  scale=1,
@@ -54,6 +53,10 @@ header-includes:
 
 <!-- $~$ para pular paragrafo (criar espaco vazio) -->
 
+
+$~$
+
+$~$
 
 $~$
 
@@ -157,18 +160,17 @@ knitr::asis_output(paste('Devolutiva gerada em', params$data))
 <!-- logos -->
 
 \begin{center}
+```{r logos, include=knitr::is_latex_output(), out.width = "19.6%", fig.show = "hold", fig.align='center'}
 
-```{r logos, include=knitr::is_latex_output(), out.width = "30%", fig.show = "hold", fig.align='center'}
+if(params$logos$lepes) knitr::include_graphics('images/lepes.png')
 
-if(params$logos$lepes){
-  knitr::include_graphics('images/lepes.png')
-}
+if(params$logos$lepes1) knitr::include_graphics('images/lepes1.png')
 
-if(params$logos$outro){
-  knitr::include_graphics('images/pdestacados.png')
-}
+if(params$logos$lepes2) knitr::include_graphics('images/lepes2.png')
+
+if(params$logos$lepes3) knitr::include_graphics('images/lepes3.png')
+
+if(params$logos$lepes4) knitr::include_graphics('images/lepes4.png')
 
 ```
-
-
 \end{center}
