@@ -5,6 +5,17 @@ library(tmap)
 library(cagedExplorer)
 source('geom_flat_violin.R')
 source('custom_map_settings.R')
+# puxando o pib atualizado
+
+pibmunicipios<-read.csv("C:/Users/dadaset/Downloads/pib-municipios.csv", encoding = "UTF-8")
+pibmunicipios<-pibmunicipios[pibmunicipios$Nome == "Série revisada", ]
+pibmunicipios<-select(pibmunicipios, Localidade, X2019)
+#fazer o innerjoin!
+
+
+
+
+
 
 # Loading and filtering dataset -----------------------------------------------
 snis <- readRDS('snis-cleanhouse.rds')
@@ -64,12 +75,13 @@ mapa_agua_tipo <- snis_agua %>%
     alpha = 1,
     id = "municipio_clean"
   ) +
-  tm_layout(main.title = 'Tipo do prestador de serviços - Água') +
+  tm_layout(main.title = 'Tipo do prestador de serviços - Água', 
+            legend.width = 0.6) +
   custom_map_settings ; mapa_agua_tipo
 
 # Saving
-tmap_save(mapa_agua_tipo, height = 6, width = 6,
-          filename = 'C:/Users/dadaset/Desktop/Fundace/Graficos/mapa-tipo-prestador-agua.png')
+#tmap_save(mapa_agua_tipo, height = 6, width = 6,
+ #         filename = 'C:/Users/dadaset/Desktop/Fundace/Graficos/mapa-tipo-prestador-agua.png')
 
 # Barplot: tipo de prestador  -------------------------------------------------
 # Data wrangling
@@ -330,10 +342,10 @@ boxplot_atendimento_agua <- ggplot(snis_boxplot_atendimento) +
             aes(x = nat_jur_simplified,
                 y = Mediana, label = Label),
             size = 3, nudge_x = 0.17, family = 'serif') +
-  scale_x_discrete(labels = c('Adm. Pública',
-                              'Soc. de Econ. Mista',
-                              'Empresa Privada')) +
-  scale_fill_manual(values = c('#fb6a4a', '#fed976', '#225ea8')) +
+  scale_x_discrete(labels = c('Soc. de Econ. Mista',
+                              'Empresa Privada',
+                              'Adm. Pública')) +
+  scale_fill_manual(values = c('#fed976', '#225ea8', '#fb6a4a')) +
   theme(legend.position = 'none', panel.grid = element_blank(),
         axis.text.x = element_text(angle = 45, hjust = 1)) +
   labs(
@@ -345,7 +357,7 @@ boxplot_atendimento_agua <- ggplot(snis_boxplot_atendimento) +
 
 # Saving
 ggsave(plot = boxplot_atendimento_agua, width = 5, height = 5.5,
-       filename = 'plots/agua/boxplot-atendimento-agua.png')
+       filename = 'boxplot-atendimento-agua.png')
 
 # Boxplot: tarifa água --------------------------------------------------------
 # Data wrangling
@@ -364,20 +376,20 @@ summary_table_tarifa <- snis_boxplot_tarifa %>%
 # Plotting
 boxplot_tarifa_agua <- ggplot(snis_boxplot_tarifa) +
   geom_flat_violin(aes(x = nat_jur_simplified,
-                       y = in005_tarifa_media_de_agua,
+                       y = in_005_tarifa_media_de_agua,
                        fill = nat_jur_simplified),
                    alpha = 0.5) +
   geom_boxplot(aes(x = nat_jur_simplified,
-                   y = in005_tarifa_media_de_agua),
+                   y = in_005_tarifa_media_de_agua),
                width = 0.1, outlier.alpha = 0.3) +
   geom_text(data = summary_table_tarifa,
             aes(x = nat_jur_simplified,
                 y = Mediana, label = Label),
             size = 3, nudge_x = 0.17, family = 'serif') +
   scale_x_discrete(labels = c('Adm. Pública',
-                              'Soc. de Econ. Mista',
-                              'Empresa Privada')) +
-  scale_fill_manual(values = c('#fb6a4a', '#fed976', '#225ea8')) +
+                              'Empresa Privada',
+                              'Soc. de Econ. Mista')) +
+  scale_fill_manual(values = c('#fb6a4a', '#225ea8', '#fed976')) +
   theme(legend.position = 'none', panel.grid = element_blank(),
         axis.text.x = element_text(angle = 45, hjust = 1)) +
   labs(
@@ -389,7 +401,7 @@ boxplot_tarifa_agua <- ggplot(snis_boxplot_tarifa) +
 
 # Saving
 ggsave(plot = boxplot_tarifa_agua, width = 5, height = 5.5,
-       filename = 'plots/agua/boxplot-tarifa-agua.png')
+       filename = 'boxplot-tarifa-agua.png')
 
 # Boxplot: desempenho financeiro ----------------------------------------------
 # Data wrangling
@@ -418,9 +430,9 @@ boxplot_desempenho <- ggplot(snis_boxplot_desempenho) +
             aes(x = nat_jur_simplified,
                 y = Mediana, label = Label),
             size = 3, nudge_x = 0.17, family = 'serif') +
-  scale_x_discrete(labels = c('Soc. de Econ. Mista', 'Adm. Pública',
-                              'Empresa Privada')) +
-  scale_fill_manual(values = c('#fed976','#fb6a4a', '#225ea8')) +
+  scale_x_discrete(labels = c('Empresa Privada', 'Adm. Pública',
+                              'Soc. de Econ. Mista')) +
+  scale_fill_manual(values = c('#225ea8','#fb6a4a', '#fed976')) +
   theme(legend.position = 'none', panel.grid = element_blank(),
         axis.text.x = element_text(angle = 45, hjust = 1)) +
   labs(
@@ -432,7 +444,7 @@ boxplot_desempenho <- ggplot(snis_boxplot_desempenho) +
 
 # Saving
 ggsave(plot = boxplot_desempenho, width = 5, height = 5.5,
-       filename = 'plots/boxplot-desempenho.png')
+       filename = 'boxplot-desempenho.png')
 
 # Boxplot: investimento per capita -----------------------------------------------
 # Data wrangling
@@ -479,7 +491,7 @@ boxplot_inv <- ggplot(snis_boxplot_inv) +
 
 # Saving
 ggsave(plot = boxplot_inv, width = 5, height = 5.5,
-       filename = 'plots/boxplot-investimento.png')
+       filename = 'boxplot-investimento.png')
 
 
 # Scatterplot: tarifa vs. atendimento: single plot ----------------------------
@@ -547,7 +559,7 @@ scatterplot_tarifa_pib <- snis_agua %>%
 
 # Saving
 ggsave(plot = scatterplot_tarifa_pib, width = 6, height = 6,
-       filename = 'C:/Users/dadaset/Desktop/Fundace/Graficos/scatterplot-tarifa-agua-vs-pib.png')
+       filename = 'scatterplot-tarifa-agua-vs-pib.png')
 
 # Scatterplot: tarifa vs. PIB - faceted  -------------------------------------
 scatterplot_tarifa_pib_faceted <- scatterplot_tarifa_pib +
@@ -562,8 +574,8 @@ ggsave(plot = scatterplot_tarifa_pib_faceted, width = 5, height = 8,
 scatterplot_tarifa_pib_per_capita <- snis_agua %>% 
   filter(nat_jur_simplified != 'Sem dados') %>% 
   mutate(nat_jur_simplified = droplevels(nat_jur_simplified)) %>% 
-  ggplot(aes(x = pib_per_capita2017, y = in005_tarifa_media_de_agua)) +
-  geom_point(aes(size = pop, col = nat_jur_simplified),
+  ggplot(aes(x = pib_per_capita2017, y = in_005_tarifa_media_de_agua)) +
+  geom_point(aes(size = pop_tot_populacao_total_do_municipio_do_ano_de_referencia_fonte_ibge, col = nat_jur_simplified),
              alpha = 0.4) +
   geom_smooth(method = 'lm', col = 'gray25',
               fill = 'lightgray', alpha = 0.5) +
@@ -585,7 +597,7 @@ scatterplot_tarifa_pib_per_capita <- snis_agua %>%
 
 # Saving
 ggsave(plot = scatterplot_tarifa_pib_per_capita, width = 6, height = 6,
-       filename = 'C:/Users/dadaset/Desktop/Fundace/Graficos/scatterplot-tarifa-agua-vs-pib-per-capita.png')
+       filename = 'scatterplot-tarifa-agua-vs-pib-per-capita.png')
 
 # Scatterplot: tarifa vs. PIB per capita - faceted  ---------------------------
 scatterplot_tarifa_pib_per_capita_faceted <- 
@@ -601,8 +613,8 @@ ggsave(plot = scatterplot_tarifa_pib_per_capita_faceted, width = 5, height = 8,
 scatterplot_atendimento_pib <- snis_agua %>% 
   filter(nat_jur_simplified != 'Sem dados') %>% 
   mutate(nat_jur_simplified = droplevels(nat_jur_simplified)) %>% 
-  ggplot(aes(x = pib2017, y = in055_indice_de_atendimento_total_de_agua)) +
-  geom_point(aes(size = pop, col = nat_jur_simplified),
+  ggplot(aes(x = pib_per_capita2017, y = in_005_tarifa_media_de_agua )) +
+  geom_point(aes(size = pop_tot_populacao_total_do_municipio_do_ano_de_referencia_fonte_ibge, col = nat_jur_simplified),
              alpha = 0.4) +
   geom_smooth(method = 'lm', col = 'gray25',
               fill = 'lightgray', alpha = 0.5) +
@@ -611,37 +623,37 @@ scatterplot_atendimento_pib <- snis_agua %>%
   coord_cartesian(ylim = c(20, 100)) +
   scale_color_manual(values = c('#fed976', '#fb6a4a', '#225ea8')) +
   labs(
-    x = 'PIB (escala logarítmica)',
-    y = 'Índice de atendimento',
-    title = 'Relação entre índice de atendimento de água e PIB',
+    x = 'PIB per capita(escala logarítmica)',
+    y = 'Tarifa',
+    title = 'Relação entre tarifa e PIB per capita',
     subtitle = 'Fornecimento de água nos municípios paulistas',
     caption =
       'Fonte: dados de atendimento do SNIS (2020); dados de PIB do IBGE (2020).\nNota: o tamanho dos pontos é proporcional à população dos municípios.'
   ) +
   guides(size = FALSE) +
-  theme(panel.grid = element_blank(), legend.title = element_blank(),
-        legend.position = 'bottom') ; scatterplot_atendimento_pib
+  theme(legend.position = 'bottom') ; scatterplot_atendimento_pib
 
 ggsave(plot = scatterplot_atendimento_pib, width = 6, height = 6,
-       filename = 'C:/Users/dadaset/Desktop/Fundace/Graficos/scatterplot-atendimento-agua-vs-pib.png')
+       filename = 'scatterplot-atendimento-agua-vs-pib.png')
 
 # Scatterplot: atendimento vs. PIB - faceted  -------------------------------------
 scatterplot_atendimento_pib_faceted <- scatterplot_atendimento_pib +
   scale_y_continuous(breaks = seq(0, 100, by = 20)) +
   coord_cartesian() +
   facet_wrap(~ nat_jur_simplified, nrow = 3, scales = 'free_y') +
-  guides(size = FALSE, color = FALSE) ; scatterplot_atendimento_pib_faceted
+  guides(size = FALSE, color = FALSE) 
+  
 
 # Saving
 ggsave(plot = scatterplot_atendimento_pib_faceted, width = 5, height = 8,
-       filename = 'C:/Users/dadaset/Desktop/Fundace/Graficos/scatterplot-atendimento-agua-vs-pib-faceted.png')
+       filename = 'scatterplot-tarifa-agua-vs-pib-per-capita-faceted.png')
 
 # Scatterplot: atendimento vs PIB per capita - single plot --------------------
 scatterplot_atendimento_pib_per_capita <- snis_agua %>% 
   filter(nat_jur_simplified != 'Sem dados') %>% 
   mutate(nat_jur_simplified = droplevels(nat_jur_simplified)) %>% 
-  ggplot(aes(x = pib_per_capita2017, y = in055_indice_de_atendimento_total_de_agua)) +
-  geom_point(aes(size = pop, col = nat_jur_simplified),
+  ggplot(aes(x = pib_per_capita2017, y = in_055_indice_de_atendimento_total_de_agua)) +
+  geom_point(aes(size = pop_tot_populacao_total_do_municipio_do_ano_de_referencia_fonte_ibge, col = nat_jur_simplified),
              alpha = 0.4) +
   geom_smooth(method = 'lm', col = 'gray25',
               fill = 'lightgray', alpha = 0.5) +
@@ -662,7 +674,7 @@ scatterplot_atendimento_pib_per_capita <- snis_agua %>%
         legend.position = 'bottom') ; scatterplot_atendimento_pib_per_capita
 
 ggsave(plot = scatterplot_atendimento_pib_per_capita, width = 6, height = 6,
-       filename = 'C:/Users/dadaset/Desktop/Fundace/Graficos/scatterplot-atendimento-agua-vs-pib-per-capita.png')
+       filename = 'scatterplot-atendimento-agua-vs-pib-per-capita.png')
 
 # Scatterplot: atendimento vs. PIB per capita - faceted  -------------------------------------
 scatterplot_atendimento_pib_per_capita_faceted <- scatterplot_atendimento_pib_per_capita +
@@ -673,7 +685,7 @@ scatterplot_atendimento_pib_per_capita_faceted <- scatterplot_atendimento_pib_pe
 
 # Saving
 ggsave(plot = scatterplot_atendimento_pib_faceted, width = 5, height = 8,
-       filename = 'C:/Users/dadaset/Desktop/Fundace/Graficos/scatterplot-atendimento-agua-vs-pib-per-capita-faceted.png')
+       filename = 'scatterplot-atendimento-agua-vs-pib-per-capita-faceted.png')
 
 # Mapa: perdas de faturamento -------------------------------------------------
 mapa_perdas <- snis_agua %>% 
@@ -704,7 +716,7 @@ mapa_perdas <- snis_agua %>%
 
 # Saving
 tmap_save(mapa_perdas,  height = 6, width = 6,
-          filename = 'C:/Users/dadaset/Desktop/Fundace/Graficos/mapa-perdas.png')
+          filename = 'mapa-perdas.png')
 
 # Boxplot perdas --------------------------------------------------------------
 snis_boxplot_perdas <- snis_agua %>% 
@@ -747,4 +759,4 @@ boxplot_perdas <- ggplot(snis_boxplot_perdas) +
 
 # Saving
 ggsave(plot = boxplot_perdas, width = 5, height = 5.5,
-       filename = 'C:/Users/dadaset/Desktop/Fundace/Graficos/boxplot-perdas.png')
+       filename = 'boxplot-perdas.png')
