@@ -1,0 +1,279 @@
+---
+title: "Regressões"
+author: "Artur Coelho"
+date: "9/1/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+regressao entre indicador institucional e qualidade (se der tbm trazer grafico ggplot/correlacao disso)
+
+2- CONSORCIO (PO042 - O município é integrante de algum CONSÓRCIO INTERMUNICIPAL regulamentado pela Lei nº 11.107/2005 que tenha entre suas atribuições específicas a gestão ou prestação de um ou mais serviços de manejo de RSU (serviços de coleta de resíduos domiciliares ou públicos, operações de aterro sanitário etc.))vs taxa de cobertura e massa recuperada
+3- PLANO vs taxa de cobertura e massa recuperada
+algo nessa linha
+
+
+egressao entre indicador institucional e custo (se der tbm trazer grafico ggplot/correlacao disso)
+1- COBRA vs autossuficiencia e despesa per capita
+2- CONSORCIO vs autossuficiencia e despesa per capita
+3- PLANO vs autossuficiencia e despesa per capita
+
+
+
+```{r}
+setwd("C:/Users/dadaset/Desktop/Fundace/Tarifa lixo")
+library(ggplot2)
+library(tidyverse)
+dados<-readxl::read_xlsx("Pasta de trabalho 5 (1).xlsx")
+
+
+dados$"IN005 - Auto-suficiência financeira da prefeitura com o manejo de rsu"<-as.numeric(dados$"IN005 - Auto-suficiência financeira da prefeitura com o manejo de rsu")
+
+dados$"IN032 - Massa recuperada per capita de materiais recicláveis (exceto matéria orgânica e rejeitos) em relação à população urbana" <- as.numeric(dados$"IN032 - Massa recuperada per capita de materiais recicláveis (exceto matéria orgânica e rejeitos) em relação à população urbana")
+
+
+
+```
+
+
+
+COBRA: ...5
+
+CONSORCIO: PO042 - O município é integrante de algum CONSÓRCIO INTERMUNICIPAL regulamentado pela Lei nº 11.107/2005 que tenha entre suas atribuições específicas a gestão ou prestação de um ou mais serviços de manejo de RSU (serviços de coleta de resíduos domiciliares ou públicos, operações de aterro sanitário etc.)
+
+
+PLANO: PO048 - O Município possui Plano Municipal de Gestão Integrada de Resíduos Sólidos (PMGIRS) conforme a Lei nº 12.305/2010 que trata da Política Nacional de Resíduos Sólidos?
+
+TAXA COBERTURA: IN014 - Taxa de cobertura do serviço de coleta domiciliar direta (porta-a-porta) da população urbana do município.
+
+MASSA RECUPERADA: IN032 - Massa recuperada per capita de materiais recicláveis (exceto matéria orgânica e rejeitos) em relação à população urbana
+
+AUTOSUF: IN005 - Auto-suficiência financeira da prefeitura com o manejo de rsu
+
+DESPESA PER CAPITA: IN006 - Despesa per capita com manejo de rsu em relação à população urbana
+
+
+
+
+ 
+
+
+cobra pelos serviços de coleta regular x taxa de cobertura
+
+```{r}
+
+# Regressao cobra coleta regular x taxa de cobertura
+
+model <- lm(dados$"IN014 - Taxa de cobertura do serviço de coleta domiciliar direta (porta-a-porta) da população urbana do município." ~ dados$"...5", data = dados)
+print(summary(model)$coef)
+
+
+
+#plot logistic regression curve
+a<-ggplot(dados, aes(x=dados$"IN014 - Taxa de cobertura do serviço de coleta domiciliar direta (porta-a-porta) da população urbana do município.",
+                   y=dados$"...5")) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=T, method.args = list(family=binomial))
+
+
+```
+
+Consorcio versus taxa de cobertura
+
+```{r}
+
+
+
+
+model <- lm(dados$"IN032 - Massa recuperada per capita de materiais recicláveis (exceto matéria orgânica e rejeitos) em relação à população urbana" ~ dados$"PO042 - O município é integrante de algum CONSÓRCIO INTERMUNICIPAL regulamentado pela Lei nº 11.107/2005 que tenha entre suas atribuições específicas a gestão ou prestação de um ou mais serviços de manejo de RSU (serviços de coleta de resíduos domiciliares ou públicos, operações de aterro sanitário etc.)", data = dados)
+summary(model)$coef
+
+
+
+#plot logistic regression curve
+b<-ggplot(dados, aes(x=dados$"IN014 - Taxa de cobertura do serviço de coleta domiciliar direta (porta-a-porta) da população urbana do município.",
+                   y=dados$"PO042 - O município é integrante de algum CONSÓRCIO INTERMUNICIPAL regulamentado pela Lei nº 11.107/2005 que tenha entre suas atribuições específicas a gestão ou prestação de um ou mais serviços de manejo de RSU (serviços de coleta de resíduos domiciliares ou públicos, operações de aterro sanitário etc.)")) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=T, method.args = list(family=binomial))
+
+
+
+```
+
+
+Consorcio versus massa recuperada 
+
+
+```{r}
+
+model <- lm(dados$"IN014 - Taxa de cobertura do serviço de coleta domiciliar direta (porta-a-porta) da população urbana do município." ~ dados$"PO042 - O município é integrante de algum CONSÓRCIO INTERMUNICIPAL regulamentado pela Lei nº 11.107/2005 que tenha entre suas atribuições específicas a gestão ou prestação de um ou mais serviços de manejo de RSU (serviços de coleta de resíduos domiciliares ou públicos, operações de aterro sanitário etc.)", data = dados)
+print(summary(model)$coef)
+
+
+
+
+
+#plot logistic regression curve
+c<-ggplot(dados, aes(x=dados$"IN014 - Taxa de cobertura do serviço de coleta domiciliar direta (porta-a-porta) da população urbana do município.",
+                   y=dados$"PO042 - O município é integrante de algum CONSÓRCIO INTERMUNICIPAL regulamentado pela Lei nº 11.107/2005 que tenha entre suas atribuições específicas a gestão ou prestação de um ou mais serviços de manejo de RSU (serviços de coleta de resíduos domiciliares ou públicos, operações de aterro sanitário etc.)")) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=T, method.args = list(family=binomial))
+
+
+
+```
+PLANO vs taxa de cobertura 
+
+```{r}
+
+model <- lm(dados$"IN014 - Taxa de cobertura do serviço de coleta domiciliar direta (porta-a-porta) da população urbana do município." ~ dados$"PO048 - O Município possui Plano Municipal de Gestão Integrada de Resíduos Sólidos (PMGIRS) conforme a Lei nº 12.305/2010 que trata da Política Nacional de Resíduos Sólidos?", data = dados)
+print(summary(model)$coef)
+
+
+
+#plot logistic regression curve
+c<-ggplot(dados, aes(x=dados$"IN014 - Taxa de cobertura do serviço de coleta domiciliar direta (porta-a-porta) da população urbana do município.",
+                   y=dados$"PO048 - O Município possui Plano Municipal de Gestão Integrada de Resíduos Sólidos (PMGIRS) conforme a Lei nº 12.305/2010 que trata da Política Nacional de Resíduos Sólidos?")) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=T, method.args = list(family=binomial))
+
+
+
+
+```
+
+PLANO vs  massa recuperada
+
+
+```{r}
+
+model <- lm(dados$"IN032 - Massa recuperada per capita de materiais recicláveis (exceto matéria orgânica e rejeitos) em relação à população urbana" ~ dados$"PO042 - O município é integrante de algum CONSÓRCIO INTERMUNICIPAL regulamentado pela Lei nº 11.107/2005 que tenha entre suas atribuições específicas a gestão ou prestação de um ou mais serviços de manejo de RSU (serviços de coleta de resíduos domiciliares ou públicos, operações de aterro sanitário etc.)", data = dados)
+print(summary(model)$coef)
+
+
+
+
+
+#plot logistic regression curve
+d<-ggplot(dados, aes(x=dados$"IN032 - Massa recuperada per capita de materiais recicláveis (exceto matéria orgânica e rejeitos) em relação à população urbana",
+                   y=dados$"PO042 - O município é integrante de algum CONSÓRCIO INTERMUNICIPAL regulamentado pela Lei nº 11.107/2005 que tenha entre suas atribuições específicas a gestão ou prestação de um ou mais serviços de manejo de RSU (serviços de coleta de resíduos domiciliares ou públicos, operações de aterro sanitário etc.)")) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=T, method.args = list(family=binomial))
+
+
+
+# com massa recuperada tá dando pau (pode ser porque esta em character)
+```
+
+
+
+COBRA vs autossuficiencia 
+
+```{r}
+model <- lm(dados$"IN005 - Auto-suficiência financeira da prefeitura com o manejo de rsu" ~ dados$"...5", data = dados)
+print(summary(model)$coef)
+
+
+#plot logistic regression curve
+ggplot(dados, aes(x=dados$"IN005 - Auto-suficiência financeira da prefeitura com o manejo de rsu",
+                   y=dados$"...5")) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=T, method.args = list(family=binomial)) +
+   scale_y_continuous(name="Cobrança", limits=c(-2, 2))
+
+
+```
+
+COBRA vs  despesa per capita
+
+
+```{r}
+
+model <- lm(dados$"IN006 - Despesa per capita com manejo de rsu em relação à população urbana" ~ dados$"...5", data = dados)
+print(summary(model)$coef)
+
+
+#plot logistic regression curve
+e<-ggplot(dados, aes(x=dados$"IN006 - Despesa per capita com manejo de rsu em relação à população urbana",
+                   y=dados$"...5")) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=T, method.args = list(family=binomial))
+
+
+
+
+```
+CONSORCIO vs autossuficiencia 
+
+```{r}
+
+model <- lm(dados$"IN005 - Auto-suficiência financeira da prefeitura com o manejo de rsu" ~ dados$"PO042 - O município é integrante de algum CONSÓRCIO INTERMUNICIPAL regulamentado pela Lei nº 11.107/2005 que tenha entre suas atribuições específicas a gestão ou prestação de um ou mais serviços de manejo de RSU (serviços de coleta de resíduos domiciliares ou públicos, operações de aterro sanitário etc.)", data = dados)
+print((model)$coef)
+
+
+#plot logistic regression curve
+l<-ggplot(dados, aes(x=dados$"IN005 - Auto-suficiência financeira da prefeitura com o manejo de rsu",
+                   y=dados$"PO042 - O município é integrante de algum CONSÓRCIO INTERMUNICIPAL regulamentado pela Lei nº 11.107/2005 que tenha entre suas atribuições específicas a gestão ou prestação de um ou mais serviços de manejo de RSU (serviços de coleta de resíduos domiciliares ou públicos, operações de aterro sanitário etc.)")) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=T, method.args = list(family=binomial))
+
+
+```
+
+ CONSORCIO vs despesa per capita
+ 
+```{r}
+model <- lm(dados$"IN006 - Despesa per capita com manejo de rsu em relação à população urbana" ~ dados$"PO042 - O município é integrante de algum CONSÓRCIO INTERMUNICIPAL regulamentado pela Lei nº 11.107/2005 que tenha entre suas atribuições específicas a gestão ou prestação de um ou mais serviços de manejo de RSU (serviços de coleta de resíduos domiciliares ou públicos, operações de aterro sanitário etc.)", data = dados)
+print(summary(model)$coef)
+
+
+#plot logistic regression curve
+f<-ggplot(dados, aes(x=dados$"IN006 - Despesa per capita com manejo de rsu em relação à população urbana",
+                   y=dados$"PO042 - O município é integrante de algum CONSÓRCIO INTERMUNICIPAL regulamentado pela Lei nº 11.107/2005 que tenha entre suas atribuições específicas a gestão ou prestação de um ou mais serviços de manejo de RSU (serviços de coleta de resíduos domiciliares ou públicos, operações de aterro sanitário etc.)")) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=T, method.args = list(family=binomial))
+
+
+
+```
+ 
+PLANO vs autossuficiencia
+
+
+
+```{r}
+
+model <- lm(dados$"IN005 - Auto-suficiência financeira da prefeitura com o manejo de rsu" ~ dados$"PO048 - O Município possui Plano Municipal de Gestão Integrada de Resíduos Sólidos (PMGIRS) conforme a Lei nº 12.305/2010 que trata da Política Nacional de Resíduos Sólidos?", data = dados)
+print(summary(model)$coef)
+
+
+#plot logistic regression curve
+x<-ggplot(dados, aes(x=dados$"IN005 - Auto-suficiência financeira da prefeitura com o manejo de rsu",
+                   y=dados$"PO048 - O Município possui Plano Municipal de Gestão Integrada de Resíduos Sólidos (PMGIRS) conforme a Lei nº 12.305/2010 que trata da Política Nacional de Resíduos Sólidos?")) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=T, method.args = list(family=binomial))
+
+```
+
+
+PLANO vs despesa per capita
+
+
+```{r}
+model <- lm(dados$"IN006 - Despesa per capita com manejo de rsu em relação à população urbana" ~ dados$"PO048 - O Município possui Plano Municipal de Gestão Integrada de Resíduos Sólidos (PMGIRS) conforme a Lei nº 12.305/2010 que trata da Política Nacional de Resíduos Sólidos?", data = dados)
+print(summary(model)$coef)
+
+
+#plot logistic regression curve
+g<-ggplot(dados, aes(x=dados$"IN006 - Despesa per capita com manejo de rsu em relação à população urbana",
+                   y=dados$"PO048 - O Município possui Plano Municipal de Gestão Integrada de Resíduos Sólidos (PMGIRS) conforme a Lei nº 12.305/2010 que trata da Política Nacional de Resíduos Sólidos?")) + 
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=T, method.args = list(family=binomial))
+
+```
+
+
+
